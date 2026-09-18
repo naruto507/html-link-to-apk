@@ -1,25 +1,177 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HTML to APK Builder</title>
-    <meta name="description" content="Convert HTML code or live website links into installable Android APKs with single-click packaging, live URL verification, device preview, custom package configuration, and signing for APKPure and Play Store." />
-    <meta property="og:title" content="HTML to APK Builder" />
-    <meta property="og:description" content="Convert HTML code or live website links into installable Android APKs with single-click packaging, live URL verification, device preview, custom package configuration, and signing for APKPure and Play Store." />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="bn" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML to APK & App Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#f0fdf4', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Adsterra Script Integrations -->
+  <script src="https://pl31394768.profitableratecpmnetwork.com/20/00/83/20008378efb3cc257d666cc7be072715.js"></script>
+  <script src="https://pl31392604.profitableratecpmnetwork.com/11/d4/c4/11d4c4a5281a7c675463211e54b84b6f.js"></script>
+  <script async="async" data-cfasync="false" src="https://pl31392602.profitableratecpmnetwork.com/2a00ac83f8be7cfb21427eddd0b63e05/invoke.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-brand-500/10 rounded-xl text-brand-500">
+          <i data-lucide="smartphone" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight">AppForge Pro</h1>
+          <p class="text-xs text-slate-400">HTML & URL to APK Converter</p>
+        </div>
+      </div>
+      <button onclick="toggleGuide()" class="flex items-center gap-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-700">
+        <i data-lucide="help-circle" class="w-4 h-4"></i> গাইড
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid md:grid-cols-12 gap-6">
     
-    <!-- Monetization Network: ProfitRate CPM Network Ads -->
-    <script src="https://pl31392604.profitableratecpmnetwork.com/11/d4/c4/11d4c4a5281a7c675463211e54b84b6f.js"></script>
-    <script async="async" data-cfasync="false" src="https://pl31392602.profitableratecpmnetwork.com/2a00ac83f8be7cfb21427eddd0b63e05/invoke.js"></script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    <!-- Input Panel -->
+    <div class="md:col-span-7 flex flex-col gap-5">
+      <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-5">
+        <div class="flex gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800 mb-5">
+          <button id="btn-html" onclick="setMode('html')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-brand-500 text-slate-950 transition">HTML Code</button>
+          <button id="btn-url" onclick="setMode('url')" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 transition">Website Link</button>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">App Name</label>
+            <input type="text" id="appName" value="My Awesome App" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-500">
+          </div>
+
+          <div id="htmlInput">
+            <label class="block text-xs font-semibold text-slate-400 mb-1">HTML Code</label>
+            <textarea id="htmlCode" rows="8" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs font-mono focus:outline-none focus:border-brand-500" placeholder="Paste HTML code here..."></textarea>
+          </div>
+
+          <div id="urlInput" class="hidden">
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Website URL</label>
+            <input type="url" id="webUrl" placeholder="https://example.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-500">
+          </div>
+
+          <button onclick="handleGenerate()" class="w-full py-3 bg-brand-500 hover:bg-brand-600 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2 transition shadow-lg shadow-brand-500/20">
+            <i data-lucide="download" class="w-5 h-5"></i> Build & Download APK Package
+          </button>
+        </div>
+      </div>
+
+      <!-- Native Banner Container -->
+      <div class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 text-center">
+        <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-2">Advertisement</p>
+        <div id="container-2a00ac83f8be7cfb21427eddd0b63e05"></div>
+      </div>
+    </div>
+
+    <!-- Live Preview Panel -->
+    <div class="md:col-span-5">
+      <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-5 flex flex-col items-center">
+        <h3 class="text-sm font-bold text-slate-300 mb-4 flex items-center gap-2">
+          <i data-lucide="eye" class="w-4 h-4 text-brand-500"></i> Live Preview
+        </h3>
+        <div class="w-[260px] h-[480px] bg-slate-950 rounded-[36px] border-4 border-slate-800 p-3 shadow-2xl relative overflow-hidden">
+          <iframe id="previewFrame" class="w-full h-full rounded-[24px] bg-white"></iframe>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal Guide -->
+  <div id="guideModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full">
+      <h2 class="text-lg font-bold mb-3">কীভাবে APK তৈরি করবেন?</h2>
+      <ol class="list-decimal list-inside text-xs text-slate-300 space-y-2 mb-5">
+        <li>আপনার HTML কোড বা ওয়েবসাইটের লিঙ্ক দিন।</li>
+        <li><strong>Build & Download APK Package</strong> বাটনে ক্লিক করুন।</li>
+        <li>ডাউনলোড হওয়া ZIP ফাইলটি দিয়ে অনলাইন অ্যাপ বিল্ডার বা Android Studio-তে দিয়ে APK তৈরি করে নিন।</li>
+      </ol>
+      <button onclick="toggleGuide()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 font-bold rounded-lg text-xs">বন্ধ করুন</button>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    let currentMode = 'html';
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById('btn-html').className = mode === 'html' ? 'flex-1 py-2 text-xs font-bold rounded-lg bg-brand-500 text-slate-950 transition' : 'flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 transition';
+      document.getElementById('btn-url').className = mode === 'url' ? 'flex-1 py-2 text-xs font-bold rounded-lg bg-brand-500 text-slate-950 transition' : 'flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 transition';
+      document.getElementById('htmlInput').classList.toggle('hidden', mode !== 'html');
+      document.getElementById('urlInput').classList.toggle('hidden', mode !== 'url');
+    }
+
+    function toggleGuide() {
+      const modal = document.getElementById('guideModal');
+      modal.classList.toggle('hidden');
+      modal.classList.toggle('flex');
+    }
+
+    function updatePreview() {
+      const iframe = document.getElementById('previewFrame');
+      if (currentMode === 'html') {
+        const code = document.getElementById('htmlCode').value;
+        iframe.srcdoc = code || '<h3 style="text-align:center;margin-top:50px;">Preview Area</h3>';
+      } else {
+        const url = document.getElementById('webUrl').value;
+        iframe.src = url || 'about:blank';
+      }
+    }
+
+    document.getElementById('htmlCode').addEventListener('input', updatePreview);
+    document.getElementById('webUrl').addEventListener('input', updatePreview);
+
+    function handleGenerate() {
+      // 1. Direct Link Open
+      window.open('https://www.profitableratecpmnetwork.com/s5si3k4e6y?key=0f429bba3172c40e27cde61d69a7add3', '_blank');
+
+      // 2. Generate ZIP
+      const zip = new JSZip();
+      const appName = document.getElementById('appName').value || 'App';
+
+      if (currentMode === 'html') {
+        const code = document.getElementById('htmlCode').value || '<h1>My App</h1>';
+        zip.file("index.html", code);
+      } else {
+        const url = document.getElementById('webUrl').value || 'https://example.com';
+        zip.file("index.html", `<script>window.location.href="${url}";<\/script>`);
+      }
+
+      zip.file("manifest.json", JSON.stringify({
+        name: appName,
+        short_name: appName,
+        start_url: "index.html",
+        display: "standalone"
+      }, null, 2));
+
+      zip.generateAsync({ type: "blob" }).then(function(content) {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(content);
+        a.download = `${appName.toLowerCase().replace(/\s+/g, '-')}-app-source.zip`;
+        a.click();
+      });
+    }
+  </script>
+</body>
 </html>
-<script src="https://pl31394768.profitableratecpmnetwork.com/20/00/83/20008378efb3cc257d666cc7be072715.js"></script>
