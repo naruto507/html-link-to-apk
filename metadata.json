@@ -1,0 +1,6 @@
+{
+  "name": "HTML to APK Builder",
+  "description": "Convert HTML code or live website links into installable Android APKs with single-click packaging, live URL verification, device preview, custom package configuration, and signing for APKPure and Play Store.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
