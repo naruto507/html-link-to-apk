@@ -6,6 +6,7 @@ import { LinkToApp } from './components/LinkToApp.tsx';
 import { DeviceSimulator } from './components/DeviceSimulator.tsx';
 import { BuildModal } from './components/BuildModal.tsx';
 import { PublishGuideModal } from './components/PublishGuideModal.tsx';
+import { AdBanner } from './components/AdBanner.tsx';
 import { AppConfig, AppTemplate, BuildResult } from './types.ts';
 import { generateIconDataUrl } from './utils/iconGenerator.ts';
 import { 
@@ -189,6 +190,7 @@ export default function App() {
     zoomEnabled: false,
     permissions: ['android.permission.INTERNET', 'android.permission.ACCESS_NETWORK_STATE', 'android.permission.VIBRATE'],
     themeColor: '#0ea5e9',
+    monetizationAds: true,
     iconType: 'generator',
     iconEmoji: '⚡',
     iconBg: '#0ea5e9,#0369a1',
@@ -333,6 +335,11 @@ export default function App() {
           setLeftTab(mode === 'url' ? 'link' : 'editor');
         }}
       />
+
+      {/* Monetization Ad Unit (High-CPM impressions on every visit) */}
+      <div className="max-w-7xl w-full mx-auto px-3 sm:px-5 pt-3">
+        <AdBanner />
+      </div>
 
       {/* Main Studio Workspace */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 flex flex-col lg:flex-row gap-5">

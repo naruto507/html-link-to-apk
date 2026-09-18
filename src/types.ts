@@ -12,6 +12,7 @@ export interface AppConfig {
   zoomEnabled: boolean;
   permissions: string[];
   themeColor: string;
+  monetizationAds?: boolean;
   iconType: 'generator' | 'upload';
   iconEmoji: string;
   iconBg: string;

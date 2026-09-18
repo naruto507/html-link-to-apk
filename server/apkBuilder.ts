@@ -23,6 +23,7 @@ export interface ApkBuildOptions {
   permissions?: string[];
   themeColor?: string;
   iconBase64?: string;
+  monetizationAds?: boolean;
   html?: string;
   keystore?: {
     alias?: string;
@@ -318,7 +319,23 @@ ${permissionsXml}
       addLog(`Configured Web Link target: ${targetWebUrl}`);
       addLog('Bundled offline resilience fallback screen into assets/www/offline.html');
     } else {
-      const htmlContent = options.html || '<!DOCTYPE html><html><head><title>App</title></head><body><h1>Hello World</h1></body></html>';
+      let htmlContent = options.html || '<!DOCTYPE html><html><head><title>App</title></head><body><h1>Hello World</h1></body></html>';
+      
+      // If monetization ads are enabled and not yet present in HTML, inject them
+      if (options.monetizationAds !== false && !htmlContent.includes('profitableratecpmnetwork.com')) {
+        const adSnippet = `
+<!-- Monetization: ProfitRate CPM Network Ads -->
+<script src="https://pl31392604.profitableratecpmnetwork.com/11/d4/c4/11d4c4a5281a7c675463211e54b84b6f.js"></script>
+<script async="async" data-cfasync="false" src="https://pl31392602.profitableratecpmnetwork.com/2a00ac83f8be7cfb21427eddd0b63e05/invoke.js"></script>
+<div id="container-2a00ac83f8be7cfb21427eddd0b63e05" style="width:100%;text-align:center;margin:10px auto;"></div>
+`;
+        if (htmlContent.includes('</body>')) {
+          htmlContent = htmlContent.replace('</body>', `${adSnippet}\n</body>`);
+        } else {
+          htmlContent += adSnippet;
+        }
+      }
+
       await fs.writeFile(path.join(assetsWwwDir, 'index.html'), htmlContent, 'utf-8');
       addLog('Packaged web document into assets/www/index.html');
     }
@@ -372,6 +389,8 @@ public class MainActivity extends Activity {
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        settings.setSupportMultipleWindows(true);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
         settings.setAllowFileAccessFromFileURLs(true);
@@ -454,6 +473,25 @@ public class MainActivity extends Activity {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
                 return super.onConsoleMessage(consoleMessage);
+            }
+
+            @Override
+            public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, android.os.Message resultMsg) {
+                WebView newWebView = new WebView(MainActivity.this);
+                newWebView.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                        try {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                            startActivity(intent);
+                        } catch (Exception ignored) {}
+                        return true;
+                    }
+                });
+                WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+                transport.setWebView(newWebView);
+                resultMsg.sendToTarget();
+                return true;
             }
 
             @Override

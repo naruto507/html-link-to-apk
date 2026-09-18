@@ -474,6 +474,28 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ config, onChange }) =>
                   className="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-400 focus:ring-offset-slate-900 accent-emerald-500"
                 />
               </label>
+
+              <label 
+                className="flex items-center justify-between p-3 bg-slate-950 border border-amber-500/30 bg-amber-500/5 rounded-xl cursor-pointer hover:border-amber-500/50 transition-colors"
+              >
+                <div>
+                  <div className="text-xs font-semibold text-amber-300 flex items-center gap-1.5">
+                    <span>Monetization CPM Ads (ProfitRate Network)</span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                      Earn Active
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    Automatically shows entry ads and banner ads inside the APK so you earn revenue when users open the app.
+                  </div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={config.monetizationAds ?? true}
+                  onChange={(e) => onChange(prev => ({ ...prev, monetizationAds: e.target.checked }))}
+                  className="w-4 h-4 rounded text-amber-500 focus:ring-amber-400 focus:ring-offset-slate-900 accent-amber-500"
+                />
+              </label>
             </div>
           </div>
         )}
